@@ -1,6 +1,3 @@
-group 'com.talend.tui.github'
-version '1.0-SNAPSHOT'
-
 apply plugin: 'groovy'
 
 repositories {
@@ -31,7 +28,8 @@ task fatJar(type: Jar){
             'Implementation-Version': version,
             'Main-Class': 'GitHubReleaseManagement'
     }
-    baseName = project.name + '-all'
+//    baseName = project.name + '-all'
+    baseName = project.name
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
@@ -49,7 +47,8 @@ task githubRelease (dependsOn: fatJar, type: JavaExec ) {
 
     main = 'GitHubReleaseManagement'
 
-    args += 'create'  // Create a new Release
+    args += 'xxx'  // Create a new Release
+//    args += 'create'  // Create a new Release
     args += this.properties['github.release.user'] // See gradle.properties
     args += this.properties['github.release.token'] // Can be passed in the commandline line as Gradle property: -P
     args += rootProject.name //
