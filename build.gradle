@@ -1,0 +1,98 @@
+group 'com.talend.tui.github'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+
+    compile 'org.apache.httpcomponents:httpclient:4.5.3'
+
+    compile ('org.codehaus.groovy.modules.http-builder:http-builder:0.7.1') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpcore'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
+}
+
+task fatJar(type: Jar){
+    manifest {
+        attributes 'Implementation-Title': 'GitHub Release Management API',
+            'Implementation-Version': version,
+            'Main-Class': 'GitHubReleaseManagement'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+artifacts {
+    archives fatJar
+}
+
+configurations {
+    dist
+}
+
+task githubRelease (dependsOn: fatJar, type: JavaExec ) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'GitHubReleaseManagement'
+
+    args += 'create'  // Create a new Release
+    args += this.properties['github.release.user'] // See gradle.properties
+    args += this.properties['github.release.token'] // Can be passed in the commandline line as Gradle property: -P
+    args += rootProject.name //
+    args += version  //
+    args += 'master' // branch
+    args += "${configurations['archives'].allArtifacts.getFiles().collect().join(',')}"
+    args += "First Release"
+}
+
+
+task showPropertiesTask doLast {
+
+    configurations.findAll().each { config ->
+        println "${config}:"
+        config.allArtifacts.getFiles().each { file ->
+            println " " + file
+        }
+        println ' '
+
+    }
+
+    println "Archives: "
+//    configurations.getByName('default')?.allArtifacts.getFiles().each { file ->
+//        println file
+//    }
+//    configurations['default'].allArtifacts.getFiles().each { file ->
+//        println file
+//    }
+
+//    println "Files: '${configurations['default'].allArtifacts.getFiles().collect().join(',')}'"
+    println "Files: '${configurations['archives'].allArtifacts.getFiles().collect().join(',')}'"
+//    println "Archives: ${configurations.archives.allArtifacts}"
+//    project.artifacts.each {
+//        println it
+//    }
+//    project.files().each {
+//        println it
+//    }
+
+//    project.configurations."$rootProject.name".artifacts.each {
+//        println it
+//    }
+//    println "User:" + properties['github.release.user']
+    println this.properties['github.release.user']
+    println this.properties['github.release.token']
+}
