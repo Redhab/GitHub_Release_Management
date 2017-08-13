@@ -62,6 +62,34 @@ task githubRelease (dependsOn: Jar, type: JavaExec ) {
 }
 
 ```
+Output 
+```
+> Task :githubRelease
+- Parameters:
+  - Action : create
+  - Owner  : Redhab
+  - Token  : ***************
+  - Repo   : GitHub_Release_Management
+  - Version: 1.0.0
+  - Branch : master
+  - Assets : c:\github_release_mgnt\build\libs\GitHubReleaseManagement-1.0.0.jar
+  - Notes  : First Release
+
+
+- Create a Release
+  - Successful Release creation
+  - Upload assets: 'c:\github_release_mgnt\build\libs\GitHubReleaseManagement-1.0.0.jar'
+    - Asset #1:
+      - Path: c:\github_release_mgnt\build\libs\GitHubReleaseManagement-1.0.0.jar
+      - Name: GitHubReleaseManagement-1.0.0.jar
+      - ContentType: null
+      - Upload was successful:
+        - Download URL: https://github.com/Redhab/GitHub_Release_Management/releases/download/tag-v1.0.0/GitHubReleaseManagement-1.0.0.jar
+
+```
+![alt-text](./release.png "GitHub Release Screenshot")
+
+
 Gradle: This library is intended to be used in different context (CLI, Gradle, Maven, Jenkins, ...) but if you are looking for a better integration in Gradle to create Releases, have a look at the elegant [gradle-github-plugin](https://github.com/riiid/gradle-github-plugin) 
 
 This repository uses GitHubReleaseManagement for his own release.
