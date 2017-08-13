@@ -13,8 +13,6 @@ dependencies {
         exclude group: 'org.apache.httpcomponents', module: 'httpcore'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
-
-//    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 
@@ -28,7 +26,6 @@ task fatJar(type: Jar){
             'Implementation-Version': version,
             'Main-Class': 'GitHubReleaseManagement'
     }
-//    baseName = project.name + '-all'
     baseName = project.name
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
@@ -47,8 +44,7 @@ task githubRelease (dependsOn: fatJar, type: JavaExec ) {
 
     main = 'GitHubReleaseManagement'
 
-    args += 'xxx'  // Create a new Release
-//    args += 'create'  // Create a new Release
+    args += 'create'  // Create a new Release
     args += this.properties['github.release.user'] // See gradle.properties
     args += this.properties['github.release.token'] // Can be passed in the commandline line as Gradle property: -P
     args += rootProject.name //
@@ -58,40 +54,3 @@ task githubRelease (dependsOn: fatJar, type: JavaExec ) {
     args += "First Release"
 }
 
-
-task showPropertiesTask doLast {
-
-    configurations.findAll().each { config ->
-        println "${config}:"
-        config.allArtifacts.getFiles().each { file ->
-            println " " + file
-        }
-        println ' '
-
-    }
-
-    println "Archives: "
-//    configurations.getByName('default')?.allArtifacts.getFiles().each { file ->
-//        println file
-//    }
-//    configurations['default'].allArtifacts.getFiles().each { file ->
-//        println file
-//    }
-
-//    println "Files: '${configurations['default'].allArtifacts.getFiles().collect().join(',')}'"
-    println "Files: '${configurations['archives'].allArtifacts.getFiles().collect().join(',')}'"
-//    println "Archives: ${configurations.archives.allArtifacts}"
-//    project.artifacts.each {
-//        println it
-//    }
-//    project.files().each {
-//        println it
-//    }
-
-//    project.configurations."$rootProject.name".artifacts.each {
-//        println it
-//    }
-//    println "User:" + properties['github.release.user']
-    println this.properties['github.release.user']
-    println this.properties['github.release.token']
-}
