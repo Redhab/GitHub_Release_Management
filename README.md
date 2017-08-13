@@ -62,7 +62,7 @@ task githubRelease (dependsOn: Jar, type: JavaExec ) {
 }
 
 ```
-This repository uses the generated for his own release.
+This repository uses GitHubReleaseManagement for his own release.
 
 ### Downloading
 
@@ -73,7 +73,7 @@ You can download released version from the [release page](https://github.com/Red
 * Requires JDK 8
 
 #### Building
-To build the zip and tar.gz packages
+To build the library
 
     ./gradlew fatJar
 
