@@ -62,7 +62,10 @@ task githubRelease (dependsOn: Jar, type: JavaExec ) {
 }
 
 ```
+Gradle: This library is intended to be used in different context (CLI, Gradle, Maven, Jenkins, ...) but if you are looking for a better integration in Gradle to create Releases, have a look at the elegant [gradle-github-plugin](https://github.com/riiid/gradle-github-plugin) 
+
 This repository uses GitHubReleaseManagement for his own release.
+
 
 ### Downloading
 

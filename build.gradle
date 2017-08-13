@@ -47,7 +47,7 @@ task githubRelease (dependsOn: fatJar, type: JavaExec ) {
     args += 'create'  // Create a new Release
     args += this.properties['github.release.user'] // See gradle.properties
     args += this.properties['github.release.token'] // Can be passed in the commandline line as Gradle property: -P
-    args += rootProject.name //
+    args += this.properties['github.release.repo'] //
     args += version  //
     args += 'master' // branch
     args += "${configurations['archives'].allArtifacts.getFiles().collect().join(',')}"
