@@ -402,8 +402,10 @@ class GitHubReleaseManagement {
           prerelease      : false
       ]
 
-      if (GitHubReleaseManagement.debug)
+      if (GitHubReleaseManagement.debug){
         println "POST  ${GHApiUrl}/${uri.path}"
+        println "Request body: $body"
+      }
 
       response.failure = { resp, json ->
         if (GitHubReleaseManagement.debug) {
