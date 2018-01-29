@@ -385,7 +385,10 @@ class GitHubReleaseManagement {
   }
 
   def createRelease() {
+    // Branch name : remove characters not supported by the api.
+    // If branch starts with 'origin/' remove this prefix
 
+    branch = (!"$branch".startsWith('origin/')) ?: ("$branch" - 'origin/')
     def http = new HTTPBuilder(GHApiUrl)
 
     http.setHeaders(http_headers)
