@@ -35,8 +35,6 @@ class GitHubReleaseManagement {
   static void main(String[] args) {
     def action
 
-//    println args
-
     if (!args ||
         !actions.contains("${args[0]}")
     ) {
@@ -44,38 +42,25 @@ class GitHubReleaseManagement {
       usage()
       return
     }
+
     def params = [] as Queue
     params.addAll(args)
-    def firstParam = params.poll()
 
-    if ('debug' == firstParam) {
-      debug = true
-      action = params.poll()
-    } else {
-      action = firstParam
+    // Get parameter debug
+    debug = params.poll()
+
+    action = params.poll()
+
+    if (("${action}" == 'create' && args.length < 7 || args.length > 9) ||
+        ("${action}" == 'delete' && args.length < 6) ||
+        ("${action}" == 'latest' && args.length < 5) ||
+        ("${action}" == 'list' && args.length < 5)
+    ) {
+      println "Invalid arguments."
+      usage()
+      return
     }
 
-    if (!debug) {
-      if (("${action}" == 'create' && args.length < 6 || args.length > 8) ||
-          ("${action}" == 'delete' && args.length < 5) ||
-          ("${action}" == 'latest' && args.length < 4) ||
-          ("${action}" == 'list' && args.length < 4)
-      ) {
-        println "Invalid arguments."
-        usage()
-        return
-      }
-    } else {
-      if (("${action}" == 'create' && args.length < 7 || args.length > 9) ||
-          ("${action}" == 'delete' && args.length < 6) ||
-          ("${action}" == 'latest' && args.length < 5) ||
-          ("${action}" == 'list' && args.length < 5)
-      ) {
-        println "Invalid arguments."
-        usage()
-        return
-      }
-    }
     def _owner = params.poll()
     def token = params.poll()
     def repo = params.poll()
@@ -103,10 +88,18 @@ class GitHubReleaseManagement {
       println "- Create a Release"
       def resp = ghrm.getRelease(ghrm.tag_name)
 
+      if(debug){
+        println "  !!getRelease resp: $resp"
+      }
       if (resp && resp.message) { // Version doesn't exist. Good, continue!
         if (debug)
           println "  - Version doesn't exist"
         resp = ghrm.createRelease()
+
+        if(debug){
+          println "  !!createRelease resp: $resp"
+        }
+
         if (!resp || resp.message) {
           println "  - Error Release Creation failed: resp: $resp.message"
           return
@@ -121,6 +114,10 @@ class GitHubReleaseManagement {
         if (debug)
           println "    - Upload URL '$resp.upload_url"
         def _assets = ghrm.uploadReleaseAsset(resp.upload_url)
+
+        if(debug){
+          println "  !!uploadReleaseAsset resp: $resp"
+        }
 
         if (!_assets) {
           println "  - Uploading assets failed"
@@ -405,7 +402,7 @@ class GitHubReleaseManagement {
           prerelease      : false
       ]
 
-      if (GitHubReleaseManagement.debug){
+      if (GitHubReleaseManagement.debug) {
         println "POST  ${GHApiUrl}/${uri.path}"
         println "Request body: $body"
       }

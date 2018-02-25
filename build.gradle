@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+    compile 'org.codehaus.groovy:groovy-all:2.4.13'
 
     compile 'org.apache.httpcomponents:httpclient:4.5.3'
 
@@ -17,7 +17,7 @@ dependencies {
 
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = '4.5.1'
 }
 
 task fatJar(type: Jar){
@@ -44,13 +44,14 @@ task githubRelease (dependsOn: fatJar, type: JavaExec ) {
 
     main = 'GitHubReleaseManagement'
 
-    args += 'create'  // Create a new Release
-    args += this.properties['github.release.user'] // See gradle.properties
-    args += this.properties['github.release.token'] // Can be passed in the commandline line as Gradle property: -P
-    args += this.properties['github.release.repo'] //
+    args += this.properties['github.release.debug']  // Create a new Release
+    args += this.properties['github.release.action'] // See gradle.properties
+    args += this.properties['github.release.user']   // See gradle.properties
+    args += this.properties['github.release.token']  // Can be passed in the commandline line as Gradle property: -P
+    args += this.properties['github.release.repo']   //
     args += version  //
-    args += 'master' // branch
+    args += this.properties['github.release.branch']  // branch
     args += "${configurations['archives'].allArtifacts.getFiles().collect().join(',')}"
-    args += "First Release"
+    args += "Added a new debug parameter (first)"
 }
 

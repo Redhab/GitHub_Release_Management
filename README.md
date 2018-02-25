@@ -1,6 +1,6 @@
 # GitHub Release Management
 
-**GitHubReleaseManagement** Is a library (jar file) that allows to manage GitHub repository releases and their assets (artifacts): [See release documentation](https://help.github.com/articles/about-releases/)
+**GitHubReleaseManagement** : Library (jar file) to manage GitHub repository releases and their assets (artifacts): [See release documentation](https://help.github.com/articles/about-releases/)
 
 
 The Library uses [GitHub API v3](https://developer.github.com/v3/)
@@ -22,6 +22,7 @@ The library can be used in Gradle, Maven, Jenkins, ...
 ```
 java -jar GitHubReleaseManagement-<version> <action> <user> <token> <repo> <version> <branch> <assets> <notes>
 
+debug  : (required) Available values: true, 'delete', 'latest', 'list'false. 
 action : (required) Available values: 'create', 'delete', 'latest', 'list'
          -'create': Creates a release and optionally upload artifacts (assets)
          -'delete': Deletes an existent release. The 'version' number is required.
