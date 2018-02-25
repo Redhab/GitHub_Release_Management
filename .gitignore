@@ -6,7 +6,6 @@ build/
 ### Java template
 
 # Package Files #
-*.jar
 *.war
 *.ear
 *.zip
