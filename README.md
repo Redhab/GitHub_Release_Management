@@ -22,7 +22,7 @@ The library can be used in Gradle, Maven, Jenkins, ...
 ```
 java -jar GitHubReleaseManagement-<version> <action> <user> <token> <repo> <version> <branch> <assets> <notes>
 
-debug  : (required) Available values: true, 'delete', 'latest', 'list'false. 
+debug  : (required) Available values: true, false. 
 action : (required) Available values: 'create', 'delete', 'latest', 'list'
          -'create': Creates a release and optionally upload artifacts (assets)
          -'delete': Deletes an existent release. The 'version' number is required.
@@ -52,6 +52,7 @@ task githubRelease (dependsOn: Jar, type: JavaExec ) {
 
     main = 'GitHubReleaseManagement'
 
+    args += false  // Create a new Release
     args += 'create'  // Create a new Release
     args += this.properties['github.release.user'] // See gradle.properties
     args += this.properties['github.release.token'] // Can be passed in the commandline line as Gradle property: -P
