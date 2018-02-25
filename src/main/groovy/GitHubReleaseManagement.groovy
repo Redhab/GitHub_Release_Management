@@ -9,7 +9,7 @@ import static groovyx.net.http.Method.DELETE
 
 class GitHubReleaseManagement {
 
-  private static boolean debug = false
+  private boolean debug = false
   // The action is internal and not exposed in the Usage
   private static String[] actions = ['debug', 'create', 'delete', 'latest', 'list']
 
@@ -47,7 +47,7 @@ class GitHubReleaseManagement {
     params.addAll(args)
 
     // Get parameter debug
-    debug = params.poll()
+    def debug = params.poll()
 
     action = params.poll()
 
