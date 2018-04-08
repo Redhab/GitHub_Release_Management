@@ -42,6 +42,8 @@ configurations {
 task githubRelease (dependsOn: fatJar, type: JavaExec ) {
     classpath = sourceSets.main.runtimeClasspath
 
+    println "In githubRelease: github.release.debug= '${this.properties['github.release.debug']}'"
+
     main = 'GitHubReleaseManagement'
 
     args += this.properties['github.release.debug']  // Create a new Release
@@ -51,7 +53,7 @@ task githubRelease (dependsOn: fatJar, type: JavaExec ) {
     args += this.properties['github.release.repo']   //
     args += version  //
     args += this.properties['github.release.branch']  // branch
+    args += "tag-v${version}"  // tag name
     args += "${configurations['archives'].allArtifacts.getFiles().collect().join(',')}"
-    args += "Added a new debug parameter (first)"
+    args += "Added tag name as paramter (after branch)"
 }
-

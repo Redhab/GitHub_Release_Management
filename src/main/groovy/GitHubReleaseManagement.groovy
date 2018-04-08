@@ -9,9 +9,9 @@ import static groovyx.net.http.Method.DELETE
 
 class GitHubReleaseManagement {
 
-  private boolean debug = false
+  private static boolean debug = false
   // The action is internal and not exposed in the Usage
-  private static String[] actions = ['debug', 'create', 'delete', 'latest', 'list']
+  private static String[] actions = ['create', 'delete', 'latest', 'list']
 
   private String _owner  // Do not use 'owner', it's a keyword in Groovy
   private String token
@@ -35,10 +35,8 @@ class GitHubReleaseManagement {
   static void main(String[] args) {
     def action
 
-    if (!args ||
-        !actions.contains("${args[0]}")
-    ) {
-      println "Invalid arguments."
+    if (!args ) {
+      println "Missing arguments."
       usage()
       return
     }
@@ -47,12 +45,21 @@ class GitHubReleaseManagement {
     params.addAll(args)
 
     // Get parameter debug
-    def debug = params.poll()
+    boolean debug = Boolean.valueOf(params.poll())
+
+    GitHubReleaseManagement.debug = debug
+
+    if(debug) println "Current arguments: $args"
 
     action = params.poll()
+    if(!actions.contains(action)){
+      println "Invalid 'action' argument."
+      usage()
+      return
+    }
 
-    if (("${action}" == 'create' && args.length < 7 || args.length > 9) ||
-        ("${action}" == 'delete' && args.length < 6) ||
+    if (("${action}" == 'create' && args.length < 8 || args.length > 10) ||
+        ("${action}" == 'delete' && args.length < 7) ||
         ("${action}" == 'latest' && args.length < 5) ||
         ("${action}" == 'list' && args.length < 5)
     ) {
@@ -66,6 +73,7 @@ class GitHubReleaseManagement {
     def repo = params.poll()
     def version = ('create' == action || 'delete' == action) ? params.poll() : ""
     def branch = ('create' == action) ? params.poll() : ""
+    def tag = ('create' == action || 'delete' == action) ? params.poll() : ""
     def assets = ((!debug && 'create' == action && args.length > 6) || (debug && 'create' == action && args.length > 7)) ? params.poll() : ""
     def notes = ((!debug && 'create' == action && args.length > 7) || (debug && 'create' == action && args.length > 8)) ? params.poll() : ""
 
@@ -76,16 +84,16 @@ class GitHubReleaseManagement {
     println "  - Repo   : $repo"
     println "  - Version: $version"
     println "  - Branch : $branch"
-    println "  - Assets : $assets"
+    println "  - tag : $branch"
+    println "  - Assets : $tag"
     println "  - Notes  : $notes"
     println "\n"
 
     GitHubReleaseManagement ghrm
-    ghrm = new GitHubReleaseManagement(_owner, token, repo, version, branch, assets, notes)
-
+    ghrm = new GitHubReleaseManagement(_owner, token, repo, version, branch, tag, assets, notes)
 
     if ('create' == action) {
-      println "- Create a Release"
+      println "\n- Create a Release"
       def resp = ghrm.getRelease(ghrm.tag_name)
 
       if(debug){
@@ -93,7 +101,7 @@ class GitHubReleaseManagement {
       }
       if (resp && resp.message) { // Version doesn't exist. Good, continue!
         if (debug)
-          println "  - Version doesn't exist"
+          println "\n  - Version doesn't exist"
         resp = ghrm.createRelease()
 
         if(debug){
@@ -197,7 +205,7 @@ class GitHubReleaseManagement {
 
   static void usage() {
     println "Usage:"
-    println "GitHubReleaseManagement <action> <user> <token> <repo> <version> <branch> <assets> <notes>"
+    println "GitHubReleaseManagement <action> <user> <token> <repo> <version> <branch> <tag> <assets> <notes>"
 
     println "action : (required) Available values: 'create', 'delete', 'latest', 'list'"
     println "         -'create': Allows to create a release and optionally upload artifacts (assets)"
@@ -209,6 +217,7 @@ class GitHubReleaseManagement {
     println "repo   : (required) GiHub repository"
     println "version: (required for action='create' & 'delete') Release version"
     println "branch : (required for action='create') GiHub repository branch to release from. Ex'master'"
+    println "tag    : (required for action='create') Naming convention 'v<version>'. Ex'v1.0.0'"
     println "assets : (Optional used with action='create') Assets to attach to the release."
     println "         - Format: <file1>,<file2>,..."
     println "           Comma delimited List of file path"
@@ -221,7 +230,14 @@ class GitHubReleaseManagement {
   }
 
 
-  GitHubReleaseManagement(String _owner, String token, String repo, String version = '', String branch = '', String assets = '', String notes = '') {
+  GitHubReleaseManagement(String _owner,
+                          String token,
+                          String repo,
+                          String version = '',
+                          String branch = '',
+                          String tag = '',
+                          String assets = '',
+                          String notes = '') {
 
     this._owner = _owner
     this.token = token
@@ -232,7 +248,10 @@ class GitHubReleaseManagement {
     this.notes = notes
 
     this.release_name = "v${version}".toString()
-    this.tag_name = "tag-v${version}".toString()
+//    this.tag_name = "tag-v${version}".toString()
+    this.tag_name = tag
+//    this.tag_name = "v${version}".toString()
+//    this.tag_name = this.release_name
 
     http_headers << [
         Authorization: "token ${token}".toString(),
@@ -294,9 +313,9 @@ class GitHubReleaseManagement {
 
     http.request(GET, JSON) {
       if ('latest' == tag_or_latest)
-        uri.path = "/repos/$_owner/$repo/releases/latest"
+        uri.path = "repos/$_owner/$repo/releases/latest"
       else
-        uri.path = "/repos/$_owner/$repo/releases/tags/$tag_or_latest"
+        uri.path = "repos/$_owner/$repo/releases/tags/$tag_or_latest"
 
       if (GitHubReleaseManagement.debug)
         println "GET  ${GHApiUrl}/${uri.path}"
@@ -385,13 +404,13 @@ class GitHubReleaseManagement {
     // Branch name : remove characters not supported by the api.
     // If branch starts with 'origin/' remove this prefix
 
-    branch = (!"$branch".startsWith('origin/')) ?: ("$branch" - 'origin/')
+    branch = (!"$branch".startsWith('origin/')) ? branch : ("$branch" - 'origin/')
     def http = new HTTPBuilder(GHApiUrl)
 
     http.setHeaders(http_headers)
 
     http.request(POST, JSON) {
-      uri.path = "/repos/$_owner/$repo/releases"
+      uri.path = "repos/$_owner/$repo/releases"
 
       body = [
           name            : release_name,

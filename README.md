@@ -52,7 +52,7 @@ task githubRelease (dependsOn: Jar, type: JavaExec ) {
 
     main = 'GitHubReleaseManagement'
 
-    args += false  // Create a new Release
+    args += false  // Debug
     args += 'create'  // Create a new Release
     args += this.properties['github.release.user'] // See gradle.properties
     args += this.properties['github.release.token'] // Can be passed in the commandline line as Gradle property: -P
