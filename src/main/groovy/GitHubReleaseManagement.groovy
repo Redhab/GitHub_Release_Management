@@ -72,8 +72,15 @@ class GitHubReleaseManagement {
     def token = params.poll()
     def repo = params.poll()
     def version = ('create' == action || 'delete' == action) ? params.poll() : ""
-    def branch = ('create' == action) ? params.poll() : ""
-    def tag = ('create' == action || 'delete' == action) ? params.poll() : ""
+    def branch = ""
+    def tag = ""
+    if('create' == action){
+      branch = params.poll()
+      tag = params.poll()
+    }
+    else{
+      tag = params.poll()
+    }
     def assets = ((!debug && 'create' == action && args.length > 6) || (debug && 'create' == action && args.length > 7)) ? params.poll() : ""
     def notes = ((!debug && 'create' == action && args.length > 7) || (debug && 'create' == action && args.length > 8)) ? params.poll() : ""
 
@@ -84,8 +91,8 @@ class GitHubReleaseManagement {
     println "  - Repo   : $repo"
     println "  - Version: $version"
     println "  - Branch : $branch"
-    println "  - tag : $branch"
-    println "  - Assets : $tag"
+    println "  - tag    : $tag"
+    println "  - Assets : $assets"
     println "  - Notes  : $notes"
     println "\n"
 
@@ -148,7 +155,8 @@ class GitHubReleaseManagement {
       } else {
         println "- Error: a release already exists for the version: $version"
       }
-    } else if ('delete' == action) {
+    }
+    else if ('delete' == action) {
       println "- Delete a Release"
 
       def resp = ghrm.getRelease(ghrm.tag_name)
@@ -205,7 +213,7 @@ class GitHubReleaseManagement {
 
   static void usage() {
     println "Usage:"
-    println "GitHubReleaseManagement <action> <user> <token> <repo> <version> <branch> <tag> <assets> <notes>"
+    println "GitHubReleaseManagement <action> <owner> <token> <repo> <version> <branch> <tag> <assets> <notes>"
 
     println "action : (required) Available values: 'create', 'delete', 'latest', 'list'"
     println "         -'create': Allows to create a release and optionally upload artifacts (assets)"
@@ -217,7 +225,7 @@ class GitHubReleaseManagement {
     println "repo   : (required) GiHub repository"
     println "version: (required for action='create' & 'delete') Release version"
     println "branch : (required for action='create') GiHub repository branch to release from. Ex'master'"
-    println "tag    : (required for action='create') Naming convention 'v<version>'. Ex'v1.0.0'"
+    println "tag    : (required for action='create') . Ex'tag-v1.0.0'"
     println "assets : (Optional used with action='create') Assets to attach to the release."
     println "         - Format: <file1>,<file2>,..."
     println "           Comma delimited List of file path"
@@ -226,7 +234,6 @@ class GitHubReleaseManagement {
     println "----------"
     println "The naming convention for the release and the associated tag are based on the 'version' parameter with following format: "
     println " - Release name = v<version>"
-    println " - Tag name     = tag-<version>"
   }
 
 

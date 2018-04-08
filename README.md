@@ -33,6 +33,7 @@ token  : (required) GiHub personal access token. See https://github.com/blog/150
 repo   : (required) GiHub repository
 version: (required for action='create' & 'delete') Release version
 branch : (required for action='create') GiHub repository branch to release from. Ex'master'
+tag    : (required for action='create' & 'delete') . Ex'tag-v1.0.0'
 assets : (Optional used with action='create') Assets to attach to the release.
          - Format: <file1>,<file2>,...
            Comma delimited List of file path
@@ -42,7 +43,6 @@ Important:
 ----------
 The naming convention for the release and the associated tag are based on the 'version' parameter with following format:
  - Release name = v<version>
- - Tag name     = tag-<version>
 ```        
 
 In Gradle:
@@ -59,6 +59,7 @@ task githubRelease (dependsOn: Jar, type: JavaExec ) {
     args += rootProject.name // Repository Name === Project name
     args += version          //
     args += 'master'         // branch
+    args += "tag-v$version"  // tag name
     args += "${configurations['archives'].allArtifacts.getFiles().collect().join(',')}" // List all the generated library files as assets
     args += "First Release"
 }
@@ -74,6 +75,7 @@ Output
   - Repo   : GitHub_Release_Management
   - Version: 1.0.0
   - Branch : master
+  - Tag    : tag-v1.0.0
   - Assets : C:\github_release_mgnt\build\libs\GitHubReleaseManagement-1.0.0.jar
   - Notes  : First Release
 

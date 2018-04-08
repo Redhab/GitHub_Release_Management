@@ -57,3 +57,19 @@ task githubRelease (dependsOn: fatJar, type: JavaExec ) {
     args += "${configurations['archives'].allArtifacts.getFiles().collect().join(',')}"
     args += "Added tag name as paramter (after branch)"
 }
+
+task githubReleaseDelete (type: JavaExec ) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    println "In githubRelease: github.release.debug= '${this.properties['github.release.debug']}'"
+
+    main = 'GitHubReleaseManagement'
+
+    args += this.properties['github.release.debug']  // Create a new Release
+    args += 'delete'
+    args += this.properties['github.release.user']   // See gradle.properties
+    args += this.properties['github.release.token']  // Can be passed in the commandline line as Gradle property: -P
+    args += this.properties['github.release.repo']   //
+    args += version  //
+    args += "tag-v${version}"  // tag name
+}
