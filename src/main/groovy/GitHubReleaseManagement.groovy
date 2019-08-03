@@ -52,18 +52,28 @@ class GitHubReleaseManagement {
     if(debug) println "Current arguments: $args"
 
     action = params.poll()
+    if(debug) println "action: '${action}'"
     if(!actions.contains(action)){
       println "Invalid 'action' argument."
       usage()
       return
     }
-
+     
     if (("${action}" == 'create' && args.length < 8 || args.length > 10) ||
         ("${action}" == 'delete' && args.length < 7) ||
         ("${action}" == 'latest' && args.length < 5) ||
         ("${action}" == 'list' && args.length < 5)
     ) {
-      println "Invalid arguments."
+      println "Invalid number of arguments (${args.length}) for action '${action}'."
+      if("${action}" == 'create'){
+        println "  - Hint: Check that you don't have a '\"' (double quote) in your release note text (last argument)"
+      }
+      if(debug) {
+        println ">> List of arguments:"
+        args.eachWithIndex{ String entry, int i ->
+          println ">> $i = '${entry}'"
+        }
+      }
       usage()
       return
     }
@@ -72,15 +82,8 @@ class GitHubReleaseManagement {
     def token = params.poll()
     def repo = params.poll()
     def version = ('create' == action || 'delete' == action) ? params.poll() : ""
-    def branch = ""
-    def tag = ""
-    if('create' == action){
-      branch = params.poll()
-      tag = params.poll()
-    }
-    else{
-      tag = params.poll()
-    }
+    def branch = params.poll()
+    def tag = params.poll()
     def assets = ((!debug && 'create' == action && args.length > 6) || (debug && 'create' == action && args.length > 7)) ? params.poll() : ""
     def notes = ((!debug && 'create' == action && args.length > 7) || (debug && 'create' == action && args.length > 8)) ? params.poll() : ""
 

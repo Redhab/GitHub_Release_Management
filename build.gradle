@@ -15,9 +15,8 @@ dependencies {
     }
 }
 
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.5.1'
+wrapper() {
+    gradleVersion = '5.5.1'
 }
 
 task fatJar(type: Jar){
@@ -42,8 +41,6 @@ configurations {
 task githubRelease (dependsOn: fatJar, type: JavaExec ) {
     classpath = sourceSets.main.runtimeClasspath
 
-    println "In githubRelease: github.release.debug= '${this.properties['github.release.debug']}'"
-
     main = 'GitHubReleaseManagement'
 
     args += this.properties['github.release.debug']  // Create a new Release
@@ -55,13 +52,11 @@ task githubRelease (dependsOn: fatJar, type: JavaExec ) {
     args += this.properties['github.release.branch']  // branch
     args += "tag-v${version}"  // tag name
     args += "${configurations['archives'].allArtifacts.getFiles().collect().join(',')}"
-    args += "Added tag name as paramter (after branch)"
+    args += "Improve debug trace and failure diagnostics"
 }
 
 task githubReleaseDelete (type: JavaExec ) {
     classpath = sourceSets.main.runtimeClasspath
-
-    println "In githubRelease: github.release.debug= '${this.properties['github.release.debug']}'"
 
     main = 'GitHubReleaseManagement'
 
@@ -71,5 +66,6 @@ task githubReleaseDelete (type: JavaExec ) {
     args += this.properties['github.release.token']  // Can be passed in the commandline line as Gradle property: -P
     args += this.properties['github.release.repo']   //
     args += version  //
+    args += this.properties['github.release.branch']  //branch:  not used for 'delete' action
     args += "tag-v${version}"  // tag name
 }
