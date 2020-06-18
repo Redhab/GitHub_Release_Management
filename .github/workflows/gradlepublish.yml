@@ -61,7 +61,11 @@ jobs:
         with:
           tag_name: tag_v${{ steps.dotenv.outputs.version }}
           release_name: Release v${{ steps.dotenv.outputs.version }}
-          body: ${{ env.RELEASE_NOTES_CONTENT }}
+          body: |
+            Release notes
+            ```
+              ${{ env.RELEASE_NOTES_CONTENT }}
+            ```
           draft: false
           prerelease: false
 
