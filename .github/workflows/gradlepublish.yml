@@ -21,11 +21,20 @@ jobs:
 #        path: ./gradle.properties
 #        log-variables: true
 
+#    - name: Dotenv Action
+#      id: dotenv
+#      uses: c-py/action-dotenv-to-setenv@v1
+#      with:
+#        env-file: ./gradle.properties
+
     - name: Dotenv Action
       id: dotenv
-      uses: c-py/action-dotenv-to-setenv@v1
+      uses: dlip/envy.sh@v2.3.7
       with:
-        env-file: ./gradle.properties
+        input-file: ./gradle.properties
+
+    - name: Print env
+      run: env
 
     - uses: actions/checkout@v2
 
