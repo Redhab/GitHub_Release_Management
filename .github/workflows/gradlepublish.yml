@@ -19,6 +19,8 @@ jobs:
       uses: falti/dotenv-action@v0.2.4
       with:
         path: ./gradle.properties
+        log-variables: true
+        debug: true
 
     - uses: actions/checkout@v2
 
