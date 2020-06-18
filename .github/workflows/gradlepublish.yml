@@ -25,7 +25,7 @@ jobs:
       id: dotenv
       uses: c-py/action-dotenv-to-setenv@v1
       with:
-        set-env: ./gradle.properties
+        env-file: ./gradle.properties
 
     - uses: actions/checkout@v2
 
