@@ -20,7 +20,6 @@ jobs:
       with:
         path: ./gradle.properties
         log-variables: true
-        debug: true
 
     - uses: actions/checkout@v2
 
