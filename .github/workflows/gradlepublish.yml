@@ -39,20 +39,16 @@ jobs:
       - name: Package APP for prod
         run: ./gradlew fatJar
 
+      # See: https://github/community/t/set-output-truncates-multiline-strings/16852/3:
       - name: Read Release Notes
         id: release_notes
         run: |
-               RELEASE_NOTES=$(cat ReleaseNotes.txt)
-               echo $RELEASE_NOTES
-               RELEASE_NOTES="${RELEASE_NOTES//'%'/'%25'}"
-               RELEASE_NOTES="${RELEASE_NOTES//$'\n'/'%0A'}"
-               RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
-               echo ":set-output name=RELEASE_NOTES_CONTENT::$RELEASE_NOTES"
-
-
-      - name: Print Release notes
-        run: |
-          echo $RELEASE_NOTES
+          RELEASE_NOTES="$(cat ReleaseNotes.txt)"
+          echo "$RELEASE_NOTES"
+          RELEASE_NOTES="${RELEASE_NOTES//'%'/'%25'}"
+          RELEASE_NOTES="${RELEASE_NOTES//$'\n'/'%0A'}"
+          RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
+          echo ":set-output name=releasenotes::$RELEASE_NOTES"
 
       - name: Create a GitHub Release
         id: create_release
@@ -65,7 +61,7 @@ jobs:
           body: |
             Release notes:
             ```
-              ${{ steps.release_notes.outputs.RELEASE_NOTES_CONTENT }}
+              ${{ steps.release_notes.outputs.releasenotes }}
             ```
           draft: false
           prerelease: false
