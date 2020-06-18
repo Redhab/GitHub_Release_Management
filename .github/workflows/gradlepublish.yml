@@ -18,7 +18,7 @@ jobs:
       id: dotenv
       uses: falti/dotenv-action@v0.2.4
       with:
-        path: gradle.properties
+        path: ./gradle.properties
 
     - uses: actions/checkout@v2
 
