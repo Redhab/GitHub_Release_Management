@@ -1,4 +1,5 @@
 apply plugin: 'groovy'
+//apply from:'extProperties.gradle'
 
 repositories {
     mavenCentral()
@@ -34,9 +35,7 @@ artifacts {
     archives fatJar
 }
 
-configurations {
-    dist
-}
+task list
 
 task githubRelease (dependsOn: fatJar, type: JavaExec ) {
     classpath = sourceSets.main.runtimeClasspath
