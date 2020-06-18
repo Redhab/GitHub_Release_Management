@@ -14,12 +14,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+#    - name: Dotenv Action
+#      id: dotenv
+#      uses: falti/dotenv-action@v0.2.4
+#      with:
+#        path: ./gradle.properties
+#        log-variables: true
+
     - name: Dotenv Action
       id: dotenv
-      uses: falti/dotenv-action@v0.2.4
+      uses: c-py/action-dotenv-to-setenv@v1
       with:
-        path: ./gradle.properties
-        log-variables: true
+        set-env: ./gradle.properties
 
     - uses: actions/checkout@v2
 
@@ -55,6 +61,17 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./distribution-package/tcmp-${{ steps.dotenv.outputs.version }}.zip
-        asset_name: tcmp-${{ steps.dotenv.outputs.version }}.zip
-        asset_content_type: application/zip
+        asset_path: ./build/libs/GitHubReleaseManagement-${{ steps.dotenv.outputs.version }}.jar
+        asset_name: GitHubReleaseManagement-${{ steps.dotenv.outputs.version }}.jar
+        asset_content_type: application/jar
+
+    - name: Upload Release Asset MD5
+      id: upload-release-asset-md5
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./build/libs/GitHubReleaseManagement-${{ steps.dotenv.outputs.version }}.jar.MD5
+        asset_name: GitHubReleaseManagement-${{ steps.dotenv.outputs.version }}.jar.MD5
+        asset_content_type: application/text
