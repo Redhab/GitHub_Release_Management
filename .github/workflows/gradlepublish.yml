@@ -49,6 +49,7 @@ jobs:
                RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
                echo ":set-output name=RELEASE_NOTES_CONTENT::$RELEASE_NOTES"
 
+
       - name: Print Release notes
         run: |
           echo $RELEASE_NOTES
