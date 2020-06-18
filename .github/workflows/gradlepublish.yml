@@ -22,21 +22,9 @@ jobs:
         with:
           path: ./gradle.properties
           log-variables: true
-
-      #    - name: Dotenv Action
-      #      id: dotenv
-      #      uses: c-py/action-dotenv-to-setenv@v1
-      #      with:
-      #        env-file: ./gradle.properties
-
-      #    - name: Dotenv Action
-      #      id: dotenv
-      #      uses: dlip/envy.sh@v2.3.7
-      #      with:
-      #        input-file: gradle.properties
-
-      - name: Print env
-        run: env
+#
+#      - name: Print env
+#        run: env
 
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
@@ -51,6 +39,20 @@ jobs:
       - name: Package APP for prod
         run: ./gradlew fatJar
 
+      - name: Read Release Notes
+        run: |
+          RELEASE_NOTES=$(cat ReleaseNotes.txt)
+          echo $RELEASE_NOTES
+          RELEASE_NOTES="${RELEASE_NOTES//'%'/'%25'}"
+          RELEASE_NOTES="${RELEASE_NOTES//$'\n'/'%0A'}"
+          RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
+          echo ":set-env name=RELEASE_NOTES_CONTENT::$RELEASE_NOTES"
+
+      - name: Print Release notes
+        run: |
+          echo $RELEASE_NOTES
+          echo RELEASE_NOTES_CONTENT
+
       - name: Create a GitHub Release
         id: create_release
         uses: actions/create-release@latest
@@ -59,7 +61,7 @@ jobs:
         with:
           tag_name: tag_v${{ steps.dotenv.outputs.version }}
           release_name: Release v${{ steps.dotenv.outputs.version }}
-          body: ${{ steps.dotenv.outputs.release_notes }}
+          body: ${{ env.RELEASE_NOTES_CONTENT }}
           draft: false
           prerelease: false
 

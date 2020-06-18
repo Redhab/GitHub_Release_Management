@@ -1,0 +1,33 @@
+
+
+**v1.5.0 - 06/01/2020**
+
+Update:
+- Talend branding
+
+**v1.4.0 - 05/14/2020**
+
+Fixes:
+- Collect Groups: MySQL TAC DB sql query typo
+
+**v1.3.0 - 05/04/2020**
+
+New:
+- Collect User license type: NAMED vs CONCURRENT
+
+**v1.2.0 - 05/01/2020**
+
+Fixes:
+
+- [TCMP-4](https://jira.talendforge.org/browse/TCMP-4) - TAC 6.4.1 Registration Issue on 1.0.0 GA TCMP. Fixed Dashboard Licenses repartition by versions.
+
+**v1.1.0 - 04/27/2020**
+
+Fixes:
+- [TCMP-1](https://jira.talendforge.org/browse/TCMP-1) - Unable to register and collect assets from TAC 7.3.1
+- [TCMP-2](https://jira.talendforge.org/browse/TCMP-2) - Typo in list of TMC regions
+
+**v1.0.0 - 04/07/2020**
+
+Initial release
+#

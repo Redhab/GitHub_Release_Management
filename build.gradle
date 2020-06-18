@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: 'groovy'
 //apply from:'extProperties.gradle'
 
@@ -20,7 +22,18 @@ wrapper() {
     gradleVersion = '5.5.1'
 }
 
-task fatJar(type: Jar){
+
+task genDocumentation(type: Copy) {
+    from('./doc_template') {
+        filter(ReplaceTokens, tokens: [
+                CURRENT_VERSION: version,
+                RELEASE_NOTES  : file('ReleaseNotes.txt').text
+        ])
+    }
+    into './distribution'
+}
+
+task fatJar(type: Jar, dependsOn: [genDocumentation]){
     manifest {
         attributes 'Implementation-Title': 'GitHub Release Management API',
             'Implementation-Version': version,
