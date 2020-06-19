@@ -60,9 +60,7 @@ jobs:
           release_name: Release v${{ steps.dotenv.outputs.version }}
           body: |
             Release notes:
-            ```
-              ${{ steps.release_notes.outputs.releasenotes }}
-            ```
+            ${{ steps.release_notes.outputs.releasenotes }}
           draft: false
           prerelease: false
 
